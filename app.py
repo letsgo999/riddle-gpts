@@ -48,28 +48,31 @@ def check_answer(user_answer, riddle):
 # Streamlit UI 설정
 st.title("GPT-4 수수께끼 게임")
 
+# 세션 상태 초기화
 if "riddle" not in st.session_state:
-    st.session_state["riddle"] = generate_riddle()
+    st.session_state.riddle = generate_riddle()
+if "answer" not in st.session_state:
+    st.session_state.answer = ""
 
-st.write("수수께끼: " + st.session_state["riddle"])
+st.write("수수께끼: " + st.session_state.riddle)
 
-# 사용자 입력 처리 함수
+# 사용자 입력 처리
 def process_answer():
-    if user_answer:
-        result = check_answer(user_answer, st.session_state["riddle"])
+    if st.session_state.answer:
+        result = check_answer(st.session_state.answer, st.session_state.riddle)
         st.write(result)
     else:
         st.write("답을 입력해주세요.")
 
-# 엔터 키 처리를 위한 폼 사용
-with st.form(key='answer_form'):
-    user_answer = st.text_input("당신의 답변")
-    submit_button = st.form_submit_button(label="제출하기")
+# 입력 폼
+with st.form(key='answer_form', clear_on_submit=True):
+    st.text_input("당신의 답변", key="answer", on_change=process_answer)
+    submitted = st.form_submit_button("제출하기")
+    if submitted:
+        process_answer()
 
-# 폼 제출 처리
-if submit_button:
-    process_answer()
-
+# 다음 수수께끼 버튼
 if st.button("다음 수수께끼"):
-    st.session_state["riddle"] = generate_riddle()
-    st.experimental_rerun()
+    st.session_state.riddle = generate_riddle()
+    st.session_state.answer = ""  # 답변 입력창 초기화
+    st.rerun()
