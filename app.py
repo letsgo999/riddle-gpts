@@ -65,12 +65,12 @@ def process_answer():
     else:
         st.session_state.result = "답을 입력해주세요."
 
-# 입력 폼
-with st.form(key='answer_form', clear_on_submit=True):
-    st.text_input("당신의 답변", key="answer")
-    submitted = st.form_submit_button("제출하기")
-    if submitted:
-        process_answer()
+# 입력 필드
+st.text_input("당신의 답변", key="answer", on_change=process_answer)
+
+# 제출 버튼
+if st.button("제출하기"):
+    process_answer()
 
 # 결과 표시
 if st.session_state.result:
