@@ -53,26 +53,32 @@ if "riddle" not in st.session_state:
     st.session_state.riddle = generate_riddle()
 if "answer" not in st.session_state:
     st.session_state.answer = ""
+if "result" not in st.session_state:
+    st.session_state.result = ""
 
 st.write("수수께끼: " + st.session_state.riddle)
 
 # 사용자 입력 처리
 def process_answer():
     if st.session_state.answer:
-        result = check_answer(st.session_state.answer, st.session_state.riddle)
-        st.write(result)
+        st.session_state.result = check_answer(st.session_state.answer, st.session_state.riddle)
     else:
-        st.write("답을 입력해주세요.")
+        st.session_state.result = "답을 입력해주세요."
 
 # 입력 폼
 with st.form(key='answer_form', clear_on_submit=True):
-    st.text_input("당신의 답변", key="answer", on_change=process_answer)
+    st.text_input("당신의 답변", key="answer")
     submitted = st.form_submit_button("제출하기")
     if submitted:
         process_answer()
 
+# 결과 표시
+if st.session_state.result:
+    st.write(st.session_state.result)
+
 # 다음 수수께끼 버튼
 if st.button("다음 수수께끼"):
     st.session_state.riddle = generate_riddle()
-    st.session_state.answer = ""  # 답변 입력창 초기화
+    st.session_state.answer = ""
+    st.session_state.result = ""
     st.rerun()
